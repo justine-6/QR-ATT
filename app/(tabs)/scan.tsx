@@ -2,7 +2,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { STUDENT_ID } from '@/constants/student';
+import { useAuth } from '@/lib/auth';
 import { registerAttendance } from '@/lib/database';
 
 
@@ -10,6 +10,7 @@ import AppButton from '@/components/AppButton';
 import { COLORS } from '@/constants/colors';
 
 export default function ScanScreen() {
+  const { user } = useAuth();
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [lastData, setLastData] = useState<string | null>(null);
@@ -41,7 +42,8 @@ export default function ScanScreen() {
   const handleBarcodeScanned = ({ data }: { data: string }) => {
   setScanned(true);
   setLastData(data);
-  registerAttendance(data, STUDENT_ID).then((result) => {
+ const studentId = user?.id ?? 'unknown';
+ registerAttendance(data, studentId).then((result) => {
     setMessage(result.message);
     setSuccess(result.success);
   });

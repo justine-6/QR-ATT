@@ -9,7 +9,7 @@ export default function Index() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <Header title="QR Attendance" />
+        <Header title="QR Attendance fffsf" />
       </View>
 
       <View style={styles.bodyContainer}>
@@ -18,7 +18,7 @@ export default function Index() {
           Scan QR Codes to record attendance during school activities.
         </Text>
       </View>
-
+      
       <View style={styles.footerContainer}>
         <AppButton
           theme="primary"
