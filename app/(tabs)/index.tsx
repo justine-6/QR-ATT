@@ -43,9 +43,9 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.background, alignItems: 'center' },
-  headerContainer: { flex: 1, justifyContent: 'center' },
+  headerContainer: { flex: 0.5, justifyContent: 'center' },
   bodyContainer: { alignItems: 'center', paddingHorizontal: 32, marginBottom: 16 },
   mainTitle: { fontSize: 18, fontWeight: '600', color: COLORS.primary, marginBottom: 6, textAlign: 'center' },
   subtitle: { fontSize: 14, color: COLORS.textSecondary, textAlign: 'center' },
-  footerContainer: { flex: 1 / 3, alignItems: 'center', paddingHorizontal: 24, width: '100%' },
+  footerContainer: { flex: 0.8, alignItems: 'center', paddingHorizontal: 24, width: '100%' },
 });
