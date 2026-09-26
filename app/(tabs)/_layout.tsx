@@ -1,9 +1,44 @@
-import { Tabs } from 'expo-router';
+import { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import { COLORS } from '@/constants/colors';
+import { useAuth } from '@/lib/auth';
+
 export default function TabsLayout() {
+  const router = useRouter();
+  const { user, initialized } = useAuth();
+
+  useEffect(() => {
+    if (initialized && !user) {
+      router.replace('/login');
+    }
+  }, [initialized, user, router]);
+
+  if (!initialized || !user) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
   return (
-    <Tabs screenOptions={{ headerShown: false }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textSecondary,
+        headerStyle: { backgroundColor: COLORS.background },
+        headerTintColor: COLORS.textPrimary,
+        tabBarStyle: {
+          backgroundColor: COLORS.card,
+          borderTopColor: COLORS.border,
+          borderTopWidth: 1,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
@@ -53,16 +88,15 @@ export default function TabsLayout() {
           ),
         }}
       />
-
-      <Tabs.Screen
-        name="login"
-        options={{ href: null }}
-      />
-
-      <Tabs.Screen
-        name="register"
-        options={{ href: null }}
-      />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  loader: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.background,
+  },
+});

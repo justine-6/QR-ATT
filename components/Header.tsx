@@ -19,7 +19,7 @@ export default function Header({ title }: Props) {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: 16,
   },
   logoCircle: {
     width: 72,
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,

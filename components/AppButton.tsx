@@ -17,13 +17,13 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
       <View
         style={[
           styles.buttonOuter,
-          { borderWidth: 3, borderColor: COLORS.primary, borderRadius: 18 },
+          { borderWidth: 1, borderColor: COLORS.primary, borderRadius: 10 },
         ]}
       >
         <Pressable
           style={[
             styles.buttonInner,
-            { backgroundColor: COLORS.primary },
+            styles.primaryFill,
             disabled && styles.buttonDisabled,
           ]}
           onPress={onPress}
@@ -35,7 +35,13 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
             color={COLORS.textOnPrimary}
             style={styles.icon}
           />
-          <Text style={[styles.label, { color: COLORS.textOnPrimary }]}>
+          <Text
+            style={[
+              styles.label,
+              styles.primaryLabel,
+              { color: COLORS.textOnPrimary },
+            ]}
+          >
             {title}
           </Text>
         </Pressable>
@@ -46,7 +52,11 @@ export default function AppButton({ title, icon, theme, onPress, disabled = fals
   return (
     <View style={styles.buttonOuter}>
       <Pressable
-        style={[styles.buttonInner, disabled && styles.buttonDisabled]}
+        style={[
+          styles.buttonInner,
+          styles.secondaryFill,
+          disabled && styles.buttonDisabled,
+        ]}
         onPress={onPress}
         disabled={disabled}
       >
@@ -68,22 +78,25 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   buttonInner: {
-    borderRadius: 14,
+    borderRadius: 10,
     paddingVertical: 16,
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+  },
+  primaryFill: {
+    backgroundColor: COLORS.primary,
+  },
+  secondaryFill: {
     backgroundColor: COLORS.card,
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   icon: { paddingRight: 10 },
   label: { fontSize: 17, fontWeight: '600', color: COLORS.textPrimary },
+  primaryLabel: { fontWeight: '700' },
 });

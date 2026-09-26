@@ -44,6 +44,35 @@ npx expo start
 
 Scan QR code with Expo Go. Or press `W` for web.
 
+> **The phone's Expo Go must be the SDK 54 build** (Expo Go → Settings: `Supported SDK 54`).
+> If it shows 55/56/57 you get *"Project is incompatible with this version of Expo Go"* — the
+> project is correct, the phone's Expo Go is the wrong build:
+> **Android:** Play Store build, or <https://expo.dev/go?sdkVersion=54&platform=android>
+> **iOS:** App Store build (the App Store ships SDK 54).
+
+---
+
+## LAB INSTRUCTIONS
+
+The step-by-step student lab docs live in [`instructions/`](instructions/):
+
+- `instructions/03-database-design.md` — build the Supabase tables, RLS and trigger
+- `instructions/04-database-service.md` — `lib/database.ts` talks to the cloud
+- `instructions/05-profiles.md` — names & roles on signup and the Profile screen
+- `instructions/06-attendance-by-role.md` — role-aware History (teacher sees their events' attendance)
+- `instructions/07-visual-identity.md` — kiosk colour tokens, flat buttons, aligned auth screens
+- `instructions/08-events.md` — `lib/events.ts` service + role-gated Teacher tab (Migration Phase 7)
+- `instructions/09-qr-generation.md` — `lib/qr.ts` build/parse helpers (Migration Phase 8)
+- `instructions/10-qr-attendance.md` — attendance consolidated into `lib/attendance.ts`, `lib/database.ts` deleted (Migration Phase 9)
+- `instructions/11-attendance-history.md` — final read queries: student history + count-only teacher summary (Migration Phase 10)
+- `instructions/12-qr-connection-flow.md` — reference: the full QR create → scan → save chain
+- `instructions/migration-log.md` — every migration phase: files, reasons, testing, results
+- `instructions/13-signup-role-bugfix.md` — fix: Teacher role chosen at sign-up now persists
+- `instructions/14-pink-theme.md` — visual refresh: pink aesthetic theme
+- `instructions/troubleshooting.md` — stuck loading screen, Expo Go "incompatible" error, role bug
+
+The SQL they refer to is `supabase/schema.sql`. **Where a doc and any other note disagree, follow the doc in `instructions/`.**
+
 ---
 
 ## TROUBLESHOOTING
@@ -55,3 +84,6 @@ Scan QR code with Expo Go. Or press `W` for web.
 | QR won't scan | Phone + computer on same WiFi |
 | White screen | Wait 10s, or shake → Reload |
 | TypeScript errors | Run `npx tsc --noEmit` |
+| Spinner never disappears (Expo Go / APK / web) | See [`instructions/troubleshooting.md`](instructions/troubleshooting.md) § 1 |
+| "Project is incompatible with this version of Expo Go" | Phone's Expo Go SDK must be **54** — see [`instructions/troubleshooting.md`](instructions/troubleshooting.md) § 2 |
+| Signed up as Teacher but the app says Student | See [`instructions/13-signup-role-bugfix.md`](instructions/13-signup-role-bugfix.md) + re-run `supabase/schema.sql` |

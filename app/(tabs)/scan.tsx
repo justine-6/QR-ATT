@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useAuth } from '@/lib/auth';
-import { registerAttendance } from '@/lib/database';
+import { registerAttendance } from '@/lib/attendance';
 
 
 import AppButton from '@/components/AppButton';
@@ -40,22 +40,31 @@ export default function ScanScreen() {
   }
 
   const handleBarcodeScanned = ({ data }: { data: string }) => {
-  setScanned(true);
-  setLastData(data);
- const studentId = user?.id ?? 'unknown';
- registerAttendance(data, studentId).then((result) => {
-    setMessage(result.message);
-    setSuccess(result.success);
-  });
-};
-const handleScanAgain = () => {
-  setScanned(false);
-  setLastData(null);
-  setMessage(null);
-};
+    if (scanned) return;
 
+    setScanned(true);
+    setLastData(data);
+    setMessage('Checking QR code...');
+    setSuccess(false);
 
+    const studentId = user?.id ?? 'unknown';
+    registerAttendance(data, studentId)
+      .then((result) => {
+        setMessage(result.message || 'not QR event code');
+        setSuccess(result.success);
+      })
+      .catch(() => {
+        setMessage('not QR event code');
+        setSuccess(false);
+      });
+  };
 
+  const handleScanAgain = () => {
+    setScanned(false);
+    setLastData(null);
+    setMessage(null);
+    setSuccess(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -71,17 +80,13 @@ const handleScanAgain = () => {
           {scanned ? 'QR Code detected!' : 'Point your camera at a QR code'}
         </Text>
         {scanned && message && (
-  <Text
-    style={[styles.scanResult, success ? styles.success : styles.error]}
-  >
-    {message}
-  </Text>
-)}
-
-
+          <Text style={[styles.scanResult, success ? styles.success : styles.error]}>
+            {message}
+          </Text>
+        )}
 
         {scanned && lastData && (
-          <Text style={styles.scanResult}>{lastData}</Text>
+          <Text style={styles.scanData}>{lastData}</Text>
         )}
 
         {scanned && (
@@ -89,7 +94,7 @@ const handleScanAgain = () => {
             theme="primary"
             title="Scan Again"
             icon="refresh"
-            onPress={() => setScanned(false)}
+            onPress={handleScanAgain}
           />
         )}
       </View>
@@ -138,10 +143,19 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     textAlign: 'center',
   },
-  scanResult: { fontSize: 14, textAlign: 'center', marginBottom: 8, fontWeight: '600' },
-success:    { color: '#2E7D32' },   // green — attendance recorded
-error:      { color: '#C62828' },   // red — failed / duplicate
-scanData:   { fontSize: 12, color: COLORS.textSecondary, textAlign: 'center', marginBottom: 12 },
-
+  scanResult: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 8,
+    fontWeight: '600',
+  },
+  success: { color: COLORS.success },
+  error: { color: COLORS.danger },
+  scanData: {
+    fontSize: 12,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    marginBottom: 12,
+  },
 });
 
