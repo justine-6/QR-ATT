@@ -29,8 +29,11 @@ export default function RootLayout() {
       // students to Home. (getProfile is async; the auth screens do their
       // own replace afterwards — both target the same place.)
       getProfile(user.id).then((profile) => {
+        const metadataRole = user.user_metadata?.role;
         router.replace(
-          profile?.role === 'teacher' ? '/(tabs)/teacher' : '/(tabs)'
+          profile?.role === 'teacher' || metadataRole === 'teacher'
+            ? '/(tabs)/teacher'
+            : '/(tabs)'
         );
       });
     }

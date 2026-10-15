@@ -1,20 +1,12 @@
-import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { COLORS } from '@/constants/colors';
 import { useAuth } from '@/lib/auth';
 
 export default function TabsLayout() {
-  const router = useRouter();
   const { user, initialized } = useAuth();
-
-  useEffect(() => {
-    if (initialized && !user) {
-      router.replace('/login');
-    }
-  }, [initialized, user, router]);
 
   if (!initialized || !user) {
     return (

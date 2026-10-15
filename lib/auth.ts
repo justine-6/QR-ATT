@@ -74,15 +74,9 @@ export function initAuth(): Promise<void> {
         globalUser = session?.user ?? null;
 
         if (session) {
-          // Boot-time repair: if the profile role is stuck (e.g. signed up
-          // before the role fix, or the earlier sync failed), heal it from the
-          // device stash / signup metadata WITHOUT requiring a re-login.
-          // Bounded by a timeout so boot can never hang on it — if the sync
-          // loses the race it keeps running in the background.
-          await Promise.race([
-            syncProfile(session),
-            new Promise((resolve) => setTimeout(resolve, 1500)),
-          ]);
+          // Repair profile data in the background; it should not hold the app
+          // on the startup loader while network requests complete.
+          void syncProfile(session);
         }
       } catch {
         globalSession = null;

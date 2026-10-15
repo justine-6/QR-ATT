@@ -72,25 +72,38 @@ export default function TeacherScreen() {
           active = false;
         };
       }
-      (async () => {
-        let profile = await getProfile(user.id);
-        const metadataRole =
-          (session?.user?.user_metadata?.role as 'student' | 'teacher' | undefined) ??
-          null;
-
-        if ((profile?.role ?? 'student') !== 'teacher' && metadataRole !== 'teacher') {
-          // Self-heal: apply the signup intent / metadata, then re-read —
-          // so a stale row repairs itself while you look at this screen.
-          await syncProfile(session);
-          profile = await getProfile(user.id);
+      const metadataRole =
+        (session?.user?.user_metadata?.role as 'student' | 'teacher' | undefined) ??
+        null;
+      const timeout = setTimeout(() => {
+        if (active) {
+          setRole(metadataRole ?? 'student');
+          setRoleLoading(false);
         }
-        if (!active) return;
-        const finalRole = profile?.role ?? metadataRole ?? 'student';
-        setRole(finalRole);
-        setRoleLoading(false);
+      }, 5000);
+      (async () => {
+        try {
+          let profile = await getProfile(user.id);
+
+          if ((profile?.role ?? 'student') !== 'teacher' && metadataRole !== 'teacher') {
+            // Self-heal: apply the signup intent / metadata, then re-read —
+            // so a stale row repairs itself while you look at this screen.
+            await syncProfile(session);
+            profile = await getProfile(user.id);
+          }
+          if (!active) return;
+          const finalRole = profile?.role ?? metadataRole ?? 'student';
+          setRole(finalRole);
+        } catch {
+          if (active) setRole(metadataRole ?? 'student');
+        } finally {
+          clearTimeout(timeout);
+          if (active) setRoleLoading(false);
+        }
       })();
       return () => {
         active = false;
+        clearTimeout(timeout);
       };
     }, [user, session])
   );

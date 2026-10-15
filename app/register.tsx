@@ -12,7 +12,7 @@ import {
   Keyboard,
   Pressable,
 } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AppButton from '@/components/AppButton';
@@ -24,7 +24,6 @@ type Role = 'student' | 'teacher';
 
 export default function RegisterScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState<Role>('student');
   const [email, setEmail] = useState('');
@@ -55,7 +54,7 @@ export default function RegisterScreen() {
     setLoading(true);
 
     try {
-      const { data, error: authError, verifiedRole } = await signUp(
+      const { data, error: authError } = await signUp(
         email.trim(),
         password,
         {
@@ -66,17 +65,7 @@ export default function RegisterScreen() {
 
       if (authError) {
         setError(authError.message);
-      } else if (data.session) {
-        // Email confirmation is off, so a session exists right away.
-        // Teachers go straight to the create-events section; students to Home.
-        const metadataRole =
-          (data.user?.user_metadata?.role as 'student' | 'teacher' | undefined) ??
-          role;
-        const finalRole = verifiedRole ?? metadataRole ?? role;
-        router.replace(
-          finalRole === 'teacher' ? '/(tabs)/teacher' : '/(tabs)'
-        );
-      } else {
+      } else if (!data.session) {
         // Email confirmation is on — show the "check your email" message.
         setSuccess(true);
       }

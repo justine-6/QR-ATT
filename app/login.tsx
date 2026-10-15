@@ -11,18 +11,16 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { Link } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AppButton from '@/components/AppButton';
 import Header from '@/components/Header';
 import { COLORS } from '@/constants/colors';
 import { signIn } from '@/lib/auth';
-import { getProfile } from '@/lib/profiles';
 
 export default function LoginScreen() {
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -33,22 +31,10 @@ export default function LoginScreen() {
     setLoading(true);
 
     try {
-      const { data, error: authError } = await signIn(email.trim(), password);
+      const { error: authError } = await signIn(email.trim(), password);
 
       if (authError) {
         setError(authError.message);
-      } else {
-        // Teachers land in the create-events section; students on Home.
-        const profile = data.session
-          ? await getProfile(data.session.user.id)
-          : null;
-        const metadataRole =
-          (data.session?.user?.user_metadata?.role as 'student' | 'teacher' | undefined) ??
-          null;
-        const finalRole = profile?.role ?? metadataRole ?? 'student';
-        router.replace(
-          finalRole === 'teacher' ? '/(tabs)/teacher' : '/(tabs)'
-        );
       }
     } catch (err: any) {
       setError(err?.message || 'Unexpected error');
